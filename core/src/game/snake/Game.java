@@ -1,6 +1,7 @@
 package game.snake;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Gdx;
@@ -10,7 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import static java.lang.System.exit;
 
-public class Main extends ApplicationAdapter {
+public class Game extends ApplicationAdapter {
 
 
 	private SpriteBatch batch;
@@ -19,11 +20,13 @@ public class Main extends ApplicationAdapter {
 	private Snake snake;
 	private Apple apple;
 	private boolean gameOver;
-	//private final BitmapFont font = new BitmapFont();
+	private BitmapFont font;
 
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		font = new BitmapFont(Gdx.files.internal("font\\arial.fnt"), Gdx.files.internal("font\\arial.png"),false);
+		font.setColor(Color.RED);
 		snakeImg = new Texture("img/snake.png");
 		appleImg = new Texture("img/apple.png");
 		snake = new Snake(snakeImg);
@@ -39,9 +42,12 @@ public class Main extends ApplicationAdapter {
 		batch.begin();
 		apple.draw(batch);
 		snake.draw(batch);
-		if(!gameOver){
-			//font.draw(batch, "You lost", 720, 405);
+		if(gameOver){
+			font.draw(batch, "GAME OVER", 645, 405);
+			font.draw(batch, "(Press \"N\" to start new game, )", 500, 370);
 		}
+		String scoreS = String.valueOf(Score.getScore());
+		font.draw(batch, "Score: " + scoreS , 1250, 780);
 		batch.end();
 	}
 
@@ -56,12 +62,14 @@ public class Main extends ApplicationAdapter {
 		snake.initialize();
 		apple.randomizeApplePosition();
 		gameOver = false;
+		Score.resetScore();
 	}
 
 	private void updateGame() {
 		if (!gameOver) {
 			snake.act(Gdx.graphics.getDeltaTime());
 			if (snake.isAppleFound(apple.getPosition())) {
+				Score.score();
 				snake.extendSnake();
 				apple.randomizeApplePosition();
 			}
@@ -73,8 +81,12 @@ public class Main extends ApplicationAdapter {
 				exit(0);
 			}
 		} else {
-			if (Gdx.input.isKeyJustPressed(Input.Keys.F2)) {
+			if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
 				initializeNewGame();
+			}
+			if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+				dispose();
+				exit(0);
 			}
 		}
 	}
