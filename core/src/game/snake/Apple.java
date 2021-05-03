@@ -19,18 +19,8 @@ public class Apple {
         batch.draw(texture, position.x, position.y);
     }
 
-    public void randomizeApplePosition() {
-
-        int numberOfXPositions =
-                Gdx.graphics.getWidth() / texture.getWidth();
-        int numberOfYPositions =
-                Gdx.graphics.getHeight() / texture.getHeight();
-        this.position.set(
-                (int) (Math.random() * numberOfXPositions) *
-                        texture.getWidth(),
-                (int) (Math.random() * numberOfYPositions) *
-                        texture.getHeight()
-        );
+    public void setPosition(GridPoint2 position) {
+        this.position.set(position);
     }
 
     public GridPoint2 getPosition() {

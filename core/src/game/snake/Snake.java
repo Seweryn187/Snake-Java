@@ -12,15 +12,41 @@ enum MovementDirection { LEFT, UP, RIGHT, DOWN }
 
 public class Snake {
 
-    private final Texture texture;
+    private static final int SEGMENT_WIDTH = 30;
+    private static final int SEGMENT_HEIGHT = 30;
+
+    private static final int LAST_POSSIBLE_X_POSITION
+            = Gdx.graphics.getWidth() - SEGMENT_WIDTH;
+    private static final int LAST_POSSIBLE_Y_POSITION
+            = Gdx.graphics.getHeight() - SEGMENT_HEIGHT;
+
+    private final Texture tHeadUp;
+    private final Texture tHeadDown;
+    private final Texture tHeadLeft;
+    private final Texture tHeadRight;
+    private final Texture tBody;
+    private final Texture tTailUp;
+    private final Texture tTailDown;
+    private final Texture tTailRight;
+    private final Texture tTailLeft;
     private final List<GridPoint2> snakeSegments;
     private MovementDirection direction;
+    private MovementDirection tailDirection;
     private float timeElapsedSinceLastMove;
     private boolean canChangeDirection;
 
-    public Snake(Texture texture) {
+    public Snake(Texture tHeadUp, Texture tHeadDown, Texture tHeadLeft, Texture tHeadRight, Texture tBody, Texture tTailUp,
+                 Texture tTailDown, Texture tTailRight, Texture tTailLeft) {
 
-        this.texture = texture;
+        this.tHeadUp = tHeadUp;
+        this.tHeadDown= tHeadDown;
+        this.tHeadLeft = tHeadLeft;
+        this.tHeadRight = tHeadRight;
+        this.tBody = tBody;
+        this.tTailUp = tTailUp;
+        this.tTailDown = tTailDown;
+        this.tTailRight = tTailRight;
+        this.tTailLeft = tTailLeft;
         snakeSegments = new ArrayList<>();
     }
 
@@ -30,6 +56,7 @@ public class Snake {
         int startPositionY = 420;
         timeElapsedSinceLastMove = 0;
         direction = MovementDirection.RIGHT;
+        tailDirection = MovementDirection.RIGHT;
         snakeSegments.clear();
         snakeSegments.add(new GridPoint2(startPositionX + 150, startPositionY));
         snakeSegments.add(new GridPoint2(startPositionX + 120, startPositionY));
@@ -51,6 +78,8 @@ public class Snake {
             canChangeDirection = true;
             move();
         }
+
+        determineTailDirection();
     }
 
     public boolean isAppleFound(GridPoint2 applePosition) {
@@ -75,9 +104,51 @@ public class Snake {
 
     public void draw(Batch batch) {
 
-        for (GridPoint2 pos : snakeSegments) {
-            batch.draw(texture, pos.x, pos.y);
+        for (int i = 1; i < snakeSegments.size() - 1; i++) {
+            GridPoint2 body = snakeSegments.get(i);
+            batch.draw(tBody, body.x, body.y);
         }
+
+        GridPoint2 tail = snakeSegments.get(tailIndex());
+        switch(tailDirection){
+            case UP:{
+                batch.draw(tTailUp, tail.x, tail.y);
+                break;
+            }
+            case DOWN:{
+                batch.draw(tTailDown, tail.x, tail.y);
+                break;
+            }
+            case LEFT:{
+                batch.draw(tTailRight, tail.x, tail.y);
+                break;
+            }
+            case RIGHT:{
+                batch.draw(tTailLeft, tail.x, tail.y);
+                break;
+            }
+        }
+
+        switch(direction){
+            case UP:{
+                batch.draw(tHeadUp, head().x, head().y);
+                break;
+            }
+            case DOWN:{
+                batch.draw(tHeadDown, head().x, head().y);
+                break;
+            }
+            case LEFT:{
+                batch.draw(tHeadLeft, head().x, head().y);
+                break;
+            }
+            case RIGHT:{
+                batch.draw(tHeadRight, head().x, head().y);
+                break;
+            }
+        }
+
+
     }
 
     private void handleDirectionChange() {
@@ -112,31 +183,72 @@ public class Snake {
             snakeSegments.get(i).set(snakeSegments.get(i - 1));
         }
 
-        int segmentWidth = texture.getWidth();
-        int segmentHeight = texture.getWidth();
-
-        int lastWindowSegmentX = Gdx.graphics.getWidth() - segmentWidth;
-        int lastWindowSegmentY = Gdx.graphics.getHeight() - segmentHeight;
         GridPoint2 head = head();
 
         switch (direction) {
             case LEFT:
-                head.x = (head.x == 0) ? lastWindowSegmentX : head.x - segmentWidth;
+                head.x = (head.x == 0) ? LAST_POSSIBLE_X_POSITION : head.x - SEGMENT_WIDTH;
                 break;
             case UP:
-                head.y = (head.y == lastWindowSegmentY) ? 0 : head.y + segmentHeight;
+                head.y = (head.y == LAST_POSSIBLE_Y_POSITION) ? 0 : head.y + SEGMENT_HEIGHT;
                 break;
             case RIGHT:
-                head.x = (head.x == lastWindowSegmentX) ? 0 : head.x + segmentWidth;
+                head.x = (head.x == LAST_POSSIBLE_X_POSITION) ? 0 : head.x + SEGMENT_WIDTH;
                 break;
             case DOWN:
-                head.y = (head.y == 0) ? lastWindowSegmentY : head.y - segmentHeight;
+                head.y = (head.y == 0) ? LAST_POSSIBLE_Y_POSITION : head.y - SEGMENT_HEIGHT;
                 break;
+        }
+    }
+
+    private void determineTailDirection() {
+
+        GridPoint2 segmentBeforeTail = snakeSegments.get(tailIndex() - 1);
+        GridPoint2 tail = snakeSegments.get(tailIndex());
+
+        if (tail.x == 0 && segmentBeforeTail.x == LAST_POSSIBLE_X_POSITION) {
+
+            tailDirection = MovementDirection.LEFT;
+
+        } else if (tail.x == LAST_POSSIBLE_X_POSITION && segmentBeforeTail.x == 0) {
+
+            tailDirection = MovementDirection.RIGHT;
+
+        } else if (tail.y == 0 && segmentBeforeTail.y == LAST_POSSIBLE_Y_POSITION) {
+
+            tailDirection = MovementDirection.DOWN;
+
+        } else if (tail.y == LAST_POSSIBLE_Y_POSITION && segmentBeforeTail.y == 0) {
+
+            tailDirection = MovementDirection.UP;
+
+        }
+        else if (segmentBeforeTail.x > tail.x) {
+
+            tailDirection = MovementDirection.RIGHT;
+
+        } else if (segmentBeforeTail.x < tail.x) {
+
+            tailDirection = MovementDirection.LEFT;
+
+        } else if (segmentBeforeTail.y > tail.y) {
+
+            tailDirection = MovementDirection.UP;
+
+        } else if (segmentBeforeTail.y < tail.y) {
+
+            tailDirection = MovementDirection.DOWN;
         }
     }
 
     private GridPoint2 head() {
         return snakeSegments.get(0);
+    }
+
+    private int tailIndex() { return snakeSegments.size() - 1; }
+
+    public List<GridPoint2> getSnakeSegmentPositions() {
+        return snakeSegments;
     }
 
 }
