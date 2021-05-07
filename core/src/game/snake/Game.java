@@ -1,6 +1,7 @@
 package game.snake;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,13 +19,13 @@ public class Game extends ApplicationAdapter {
 
 	private SpriteBatch batch;
 	private Texture snakeBodyImg, snakeHeadUpImg, snakeHeadDownImg, snakeHeadLeftImg, snakeHeadRightImg, snakeTailUpImg,
-			snakeTailDownImg, snakeTailLeftImg, snakeTailRightImg;
-	private Texture appleImg;
+			snakeTailDownImg, snakeTailLeftImg, snakeTailRightImg, grassImg, appleImg;
 	private Snake snake;
 	private Apple apple;
 	private FoodPositionRandomizer foodPositionRandomizer;
 	private boolean gameOver;
 	private BitmapFont font;
+	private Music gameMusic;
 
 	@Override
 	public void create () {
@@ -41,10 +42,14 @@ public class Game extends ApplicationAdapter {
 		snakeTailRightImg = new Texture("img/snakeTailRight.png");
 		snakeTailLeftImg = new Texture("img/snakeTailLeft.png");
 		appleImg = new Texture("img/apple.png");
+		grassImg = new Texture("img/grass.png");
 		snake = new Snake(snakeHeadUpImg, snakeHeadDownImg, snakeHeadLeftImg, snakeHeadRightImg,snakeBodyImg,
 				snakeTailUpImg, snakeTailDownImg, snakeTailRightImg, snakeTailLeftImg);
 		apple = new Apple(appleImg);
 		foodPositionRandomizer = new FoodPositionRandomizer();
+		gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Music/snakeJazz.mp3"));
+		gameMusic.setLooping(true);
+		gameMusic.play();
 		initializeNewGame();
 	}
 
@@ -54,6 +59,11 @@ public class Game extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
+		for(int i = 0; i <= 1440; i+=30){
+			for(int j = 0; j <= 810; j+=30) {
+				batch.draw(grassImg, i, j);
+			}
+		}
 		apple.draw(batch);
 		snake.draw(batch);
 		if(gameOver){

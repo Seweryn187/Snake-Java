@@ -112,11 +112,11 @@ public class Snake {
         GridPoint2 tail = snakeSegments.get(tailIndex());
         switch(tailDirection){
             case UP:{
-                batch.draw(tTailUp, tail.x, tail.y);
+                batch.draw(tTailDown, tail.x, tail.y);
                 break;
             }
             case DOWN:{
-                batch.draw(tTailDown, tail.x, tail.y);
+                batch.draw(tTailUp, tail.x, tail.y);
                 break;
             }
             case LEFT:{
