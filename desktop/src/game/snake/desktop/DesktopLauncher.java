@@ -3,7 +3,7 @@ package game.snake.desktop;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import game.snake.Game;
+import game.snake.SnakeGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
@@ -13,6 +13,6 @@ public class DesktopLauncher {
 		config.resizable = false;
 		config.title = "Snake";
 		config.addIcon("Img/snake_icon.png", Files.FileType.Internal);
-		new LwjglApplication(new Game(), config);
+		new LwjglApplication(new SnakeGame(), config);
 	}
 }
