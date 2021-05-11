@@ -2,6 +2,7 @@ package game.snake;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -10,8 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.List;
-
-import static java.lang.System.exit;
 
 public class GameScreen implements Screen {
 
@@ -24,6 +23,8 @@ public class GameScreen implements Screen {
     private boolean gameOver;
     private final Music gameMusic;
     private boolean paused = false;
+    private final float screenWidth = Gdx.graphics.getWidth();
+    private final float screenHeight = Gdx.graphics.getHeight();
 
     public GameScreen(final SnakeGame game){
         this.game = game;
@@ -68,23 +69,23 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.begin();
 
-        for(int i = 0; i <= 1440; i+=30){
-            for(int j = 0; j <= 810; j+=30) {
+        for(int i = 0; i <= screenWidth; i+=30){
+            for(int j = 0; j <= screenHeight; j+=30) {
                 game.batch.draw(grassImg, i, j);
             }
         }
         apple.draw(game.batch);
         snake.draw(game.batch);
         if(gameOver){
-            game.font.draw(game.batch, "GAME OVER", 645, 405);
-            game.font.draw(game.batch, "(Press \"N\" to start new game, )", 500, 370);
+            game.font.draw(game.batch, "GAME OVER", screenWidth/2 - 80, screenHeight/2 + 60);
+            game.font.draw(game.batch, "(Press \"N\" to start new game)", screenWidth/2 - 170, screenHeight/2 + 30);
         }
         if(paused){
             gameMusic.stop();
-            game.font.draw(game.batch, "PAUSE", 645, 405);
+            game.font.draw(game.batch, "PAUSE", screenWidth/2 - 30, screenHeight/2 + 60);
         }
         String scoreS = String.valueOf(Score.getScore());
-        game.font.draw(game.batch, "Score: " + scoreS , 1250, 780);
+        game.font.draw(game.batch, "Score: " + scoreS , screenWidth - 190, screenHeight - 30);
         game.batch.end();
     }
 
@@ -94,10 +95,21 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        Gdx.input.setInputProcessor(new InputAdapter() {
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.ESCAPE) {
+                    game.setScreen(new MainMenuScreen(game));
+                }
+                return true;
+            }
+        });
     }
 
     @Override
     public void hide() {
+        gameMusic.stop();
+        Gdx.input.setInputProcessor(null);
     }
 
     @Override
@@ -121,6 +133,7 @@ public class GameScreen implements Screen {
         snakeTailLeftImg.dispose();
         snakeTailRightImg.dispose();
         appleImg.dispose();
+        gameMusic.stop();
     }
 
     private void initializeNewGame() {
@@ -164,10 +177,6 @@ public class GameScreen implements Screen {
             if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
                 initializeNewGame();
             }
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-            dispose();
-            exit(0);
         }
     }
 }

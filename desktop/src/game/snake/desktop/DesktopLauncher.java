@@ -1,18 +1,17 @@
 package game.snake.desktop;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import game.snake.SnakeGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = 1440;
-		config.height = 810;
-		config.resizable = false;
-		config.title = "Snake";
-		config.addIcon("Img/snake_icon.png", Files.FileType.Internal);
-		new LwjglApplication(new SnakeGame(), config);
+		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+		config.setWindowedMode(1440, 810);
+		config.setResizable(false);
+		config.setTitle("Snake");
+		config.setWindowIcon("Img/snake_icon.png");
+		config.setForegroundFPS(60);
+		new Lwjgl3Application(new SnakeGame(), config);
 	}
 }
