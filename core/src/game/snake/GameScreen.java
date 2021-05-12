@@ -1,9 +1,6 @@
 package game.snake;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,6 +8,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.List;
+
+import static game.snake.Score.getScore;
 
 public class GameScreen implements Screen {
 
@@ -25,6 +24,8 @@ public class GameScreen implements Screen {
     private boolean paused = false;
     private final float screenWidth = Gdx.graphics.getWidth();
     private final float screenHeight = Gdx.graphics.getHeight();
+    private static boolean continued = false;
+    private static final Preferences prefs = Gdx.app.getPreferences("myPreferences");
 
     public GameScreen(final SnakeGame game){
         this.game = game;
@@ -84,7 +85,7 @@ public class GameScreen implements Screen {
             gameMusic.stop();
             game.font.draw(game.batch, "PAUSE", screenWidth/2 - 30, screenHeight/2 + 60);
         }
-        String scoreS = String.valueOf(Score.getScore());
+        String scoreS = String.valueOf(getScore());
         game.font.draw(game.batch, "Score: " + scoreS , screenWidth - 190, screenHeight - 30);
         game.batch.end();
     }
@@ -99,6 +100,7 @@ public class GameScreen implements Screen {
             @Override
             public boolean keyDown(int keyCode) {
                 if (keyCode == Input.Keys.ESCAPE) {
+                    saveGame();
                     game.setScreen(new MainMenuScreen(game));
                 }
                 return true;
@@ -140,7 +142,13 @@ public class GameScreen implements Screen {
         snake.initialize();
         gameOver = false;
         randomizeApplePosition();
-        Score.resetScore();
+        if(getContinued()) {
+            Score.setScore(prefs.getInteger("score"));
+        }
+        else{
+            Score.resetScore();
+
+        }
     }
 
 
@@ -178,5 +186,39 @@ public class GameScreen implements Screen {
                 initializeNewGame();
             }
         }
+    }
+
+    public void saveGame(){
+        int[] snakeSegmentsPositions = new int[snake.getSnakeSegmentPositions().size()*2];
+        int j = 0;
+        prefs.putInteger("score", getScore());
+        for (int i = 0; i < snake.getSnakeSegmentPositions().size(); i++) {
+            GridPoint2 body = snake.getSnakeSegmentPositions().get(i);
+            snakeSegmentsPositions[j] = body.x;
+            snakeSegmentsPositions[j + 1] = body.y;
+            j+=2;
+        }
+        j= 0;
+        for(int i = 0; i < snake.getSnakeSegmentPositions().size(); i++){
+                prefs.putInteger("x" + i, snakeSegmentsPositions[j]);
+                prefs.putInteger("y" + i, snakeSegmentsPositions[j + 1]);
+                j+=2;
+        }
+        prefs.putInteger("numberOfSegments", snake.getSnakeSegmentPositions().size());
+        prefs.putString("movementDirection", snake.getDirection().toString());
+        prefs.putString("tailMovementDirection", snake.getTailDirection().toString());
+        prefs.flush();
+    }
+
+    public static boolean getContinued(){
+        return continued;
+    }
+
+    public static void setContinued(boolean val){
+        continued = val;
+    }
+
+    public static Preferences getPrefs(){
+        return prefs;
     }
 }

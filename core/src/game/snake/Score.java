@@ -12,6 +12,10 @@ public class Score {
         return score;
     }
 
+    public static void setScore(int scr){
+        score = scr;
+    }
+
     public static void resetScore() {
         score = 0;
     }

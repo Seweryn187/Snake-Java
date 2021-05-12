@@ -29,17 +29,13 @@ public class MainMenuScreen implements Screen {
 
         game.batch.begin();
         game.batch.draw(menuScreenImg, 0, 0);
-        game.font.draw(game.batch, "Snake game", screenWidth - 810, screenHeight - 130);
+        game.font.draw(game.batch, "Snake game", screenWidth - 810, screenHeight - 100);
         game.batch.end();
         stage.act();
         stage.draw();
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)){
             game.setScreen(new GameScreen(game));
             dispose();
-        }
-        else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-            dispose();
-            Gdx.app.exit();
         }
     }
 
@@ -53,13 +49,15 @@ public class MainMenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("skin/glassy-ui.json"));
         Table table = new Table(skin);
+
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Button buttonPlay = new TextButton("PLAY", skin,"small");
-        buttonPlay.setSize(screenWidth/15,screenHeight/13);
+        Button buttonPlay = new TextButton("PLAY", skin, "small");
+        buttonPlay.setSize(screenWidth/14,screenHeight/13);
         buttonPlay.setPosition(screenWidth/2 - 52, screenHeight/2 + 150);
         buttonPlay.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                GameScreen.setContinued(false);
                 game.setScreen(new GameScreen(game));
                 dispose();
             }
@@ -68,9 +66,26 @@ public class MainMenuScreen implements Screen {
                 return true;
             }
         });
-        final Button buttonExit = new TextButton("EXIT", skin,"small");
-        buttonExit.setSize(screenWidth/15,screenHeight/13);
-        buttonExit.setPosition(screenWidth/2 - 52, screenHeight/2 + 50);
+
+        Button buttonContinue = new TextButton("CONTINUE", skin, "small");
+        buttonContinue.setSize(screenWidth/14,screenHeight/13);
+        buttonContinue.setPosition(screenWidth/2 - 52, screenHeight/2 + 50);
+        buttonContinue.addListener(new InputListener(){
+            @Override
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                GameScreen.setContinued(true);
+                game.setScreen(new GameScreen(game));
+                dispose();
+            }
+            @Override
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                return true;
+            }
+        });
+
+        Button buttonExit = new TextButton("EXIT", skin, "small");
+        buttonExit.setSize(screenWidth/14,screenHeight/13);
+        buttonExit.setPosition(screenWidth/2 - 52, screenHeight/2 - 50);
         buttonExit.addListener(new InputListener(){
             @Override
             public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
@@ -84,6 +99,7 @@ public class MainMenuScreen implements Screen {
         });
 
         stage.addActor(buttonPlay);
+        stage.addActor(buttonContinue);
         stage.addActor(buttonExit);
     }
 

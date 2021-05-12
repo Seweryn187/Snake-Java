@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,17 +53,32 @@ public class Snake {
 
     public void initialize() {
 
-        int startPositionX = 720;
-        int startPositionY = 420;
-        timeElapsedSinceLastMove = 0;
-        direction = MovementDirection.RIGHT;
-        tailDirection = MovementDirection.RIGHT;
-        snakeSegments.clear();
-        snakeSegments.add(new GridPoint2(startPositionX + 150, startPositionY));
-        snakeSegments.add(new GridPoint2(startPositionX + 120, startPositionY));
-        snakeSegments.add(new GridPoint2(startPositionX + 90, startPositionY));
-        snakeSegments.add(new GridPoint2(startPositionX + 60, startPositionY));
-        snakeSegments.add(new GridPoint2(startPositionX + 30, startPositionY));
+        if(GameScreen.getContinued()){
+
+            timeElapsedSinceLastMove = 0;
+            direction = Enum.valueOf(MovementDirection.class,GameScreen.getPrefs().getString("movementDirection"));
+            tailDirection = Enum.valueOf(MovementDirection.class,GameScreen.getPrefs().getString("tailMovementDirection"));
+            snakeSegments.clear();
+            for(int i = 0; i < GameScreen.getPrefs().getInteger("numberOfSegments"); i++){
+                snakeSegments.add(new GridPoint2(GameScreen.getPrefs().getInteger("x"+i),
+                        GameScreen.getPrefs().getInteger("y"+i)));
+            }
+
+        }
+        else{
+
+            int startPositionX = 720;
+            int startPositionY = 420;
+            timeElapsedSinceLastMove = 0;
+            direction = MovementDirection.RIGHT;
+            tailDirection = MovementDirection.RIGHT;
+            snakeSegments.clear();
+            snakeSegments.add(new GridPoint2(startPositionX + 150, startPositionY));
+            snakeSegments.add(new GridPoint2(startPositionX + 120, startPositionY));
+            snakeSegments.add(new GridPoint2(startPositionX + 90, startPositionY));
+            snakeSegments.add(new GridPoint2(startPositionX + 60, startPositionY));
+            snakeSegments.add(new GridPoint2(startPositionX + 30, startPositionY));
+        }
     }
 
     public void act(float deltaTime) {
@@ -251,4 +267,11 @@ public class Snake {
         return snakeSegments;
     }
 
+    public MovementDirection getDirection(){
+        return direction;
+    }
+
+    public MovementDirection getTailDirection(){
+        return tailDirection;
+    }
 }
