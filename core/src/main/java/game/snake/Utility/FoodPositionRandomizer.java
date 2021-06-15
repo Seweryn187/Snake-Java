@@ -16,8 +16,8 @@ public class FoodPositionRandomizer {
 
     public FoodPositionRandomizer() {
 
-        int numberOfXPositions = Gdx.graphics.getWidth() / SEGMENT_WIDTH;
-        int numberOfYPositions = Gdx.graphics.getHeight() / SEGMENT_HEIGHT;
+        int numberOfXPositions = 1440 / SEGMENT_WIDTH;
+        int numberOfYPositions = 810 / SEGMENT_HEIGHT;
 
         allPossiblePositions = new ArrayList<>();
 
@@ -29,7 +29,7 @@ public class FoodPositionRandomizer {
         }
     }
 
-    public GridPoint2 getRandomAvailablePosition(List<GridPoint2> occupiedPositions) throws NoMorePositionsAvailable {
+    public GridPoint2 getRandomAvailablePosition(List<GridPoint2> occupiedPositions){
 
         HashSet<GridPoint2> unavailablePositions = new HashSet<>(occupiedPositions);
 
@@ -39,10 +39,6 @@ public class FoodPositionRandomizer {
             if (!unavailablePositions.contains(position)) {
                 availablePositions.add(position);
             }
-        }
-
-        if (availablePositions.size() == 0) {
-            throw new NoMorePositionsAvailable();
         }
 
         return availablePositions.get((int) (Math.random() * availablePositions.size()));

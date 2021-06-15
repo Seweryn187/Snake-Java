@@ -7,10 +7,14 @@ import com.badlogic.gdx.math.GridPoint2;
 public class Apple {
 
     private final GridPoint2 position;
-    private final Texture texture;
+    private Texture texture;
 
     public Apple(Texture texture) {
         this.texture = texture;
+        this.position = new GridPoint2();
+    }
+
+    public Apple() {
         this.position = new GridPoint2();
     }
 

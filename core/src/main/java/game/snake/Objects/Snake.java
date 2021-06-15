@@ -18,22 +18,22 @@ public class Snake {
     private static final int SEGMENT_HEIGHT = 30;
 
     private static final int LAST_POSSIBLE_X_POSITION
-            = Gdx.graphics.getWidth() - SEGMENT_WIDTH;
+            = 1440 - SEGMENT_WIDTH;
     private static final int LAST_POSSIBLE_Y_POSITION
-            = Gdx.graphics.getHeight() - SEGMENT_HEIGHT;
+            = 810 - SEGMENT_HEIGHT;
 
-    private final Texture tHeadUp;
-    private final Texture tHeadDown;
-    private final Texture tHeadLeft;
-    private final Texture tHeadRight;
-    private final Texture tBody;
-    private final Texture tTailUp;
-    private final Texture tTailDown;
-    private final Texture tTailRight;
-    private final Texture tTailLeft;
-    private final List<GridPoint2> snakeSegments;
-    private MovementDirection direction;
-    private MovementDirection tailDirection;
+    private Texture tHeadUp;
+    private Texture tHeadDown;
+    private Texture tHeadLeft;
+    private Texture tHeadRight;
+    private Texture tBody;
+    private Texture tTailUp;
+    private Texture tTailDown;
+    private Texture tTailRight;
+    private Texture tTailLeft;
+    public final List<GridPoint2> snakeSegments;
+    public MovementDirection direction;
+    public MovementDirection tailDirection;
     private float timeElapsedSinceLastMove;
     private boolean canChangeDirection;
 
@@ -49,6 +49,10 @@ public class Snake {
         this.tTailDown = tTailDown;
         this.tTailRight = tTailRight;
         this.tTailLeft = tTailLeft;
+        snakeSegments = new ArrayList<>();
+    }
+
+    public Snake() {
         snakeSegments = new ArrayList<>();
     }
 
@@ -113,7 +117,6 @@ public class Snake {
     }
 
     public void extendSnake() {
-
         snakeSegments.add(new GridPoint2(snakeSegments.get(snakeSegments.size() - 1)));
     }
 
@@ -172,8 +175,6 @@ public class Snake {
                 break;
             }
         }
-
-
     }
 
     private void handleDirectionChange() {
@@ -202,7 +203,7 @@ public class Snake {
         }
     }
 
-    private void move() {
+    public void move() {
 
         for (int i = snakeSegments.size() - 1; i > 0; i--) {
             snakeSegments.get(i).set(snakeSegments.get(i - 1));
@@ -226,7 +227,7 @@ public class Snake {
         }
     }
 
-    private void determineTailDirection() {
+    public void determineTailDirection() {
 
         GridPoint2 segmentBeforeTail = snakeSegments.get(tailIndex() - 1);
         GridPoint2 tail = snakeSegments.get(tailIndex());
@@ -258,7 +259,7 @@ public class Snake {
         }
     }
 
-    private GridPoint2 head() {
+    public GridPoint2 head() {
         return snakeSegments.get(0);
     }
 

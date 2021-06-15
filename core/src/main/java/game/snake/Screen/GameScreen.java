@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.GridPoint2;
 import game.snake.Objects.Apple;
 import game.snake.Objects.Snake;
 import game.snake.Utility.FoodPositionRandomizer;
-import game.snake.Utility.NoMorePositionsAvailable;
 import game.snake.Utility.Score;
 
 import java.util.Arrays;
@@ -166,13 +165,8 @@ public class GameScreen implements Screen {
 
 
     private void randomizeApplePosition() {
-        List<GridPoint2> occupiedPositions =
-                snake.getSnakeSegmentPositions();
-        try {
-            apple.setPosition(foodPositionRandomizer.getRandomAvailablePosition(occupiedPositions));
-        } catch (NoMorePositionsAvailable e) {
-            gameOver = true;
-        }
+        List<GridPoint2> occupiedPositions = snake.getSnakeSegmentPositions();
+        apple.setPosition(foodPositionRandomizer.getRandomAvailablePosition(occupiedPositions));
     }
 
     private void updateGame() {
@@ -243,7 +237,7 @@ public class GameScreen implements Screen {
         return prefs;
     }
 
-    public void saveBestScore(){
+    public void saveBestScore() {
         if(!prefs.contains("bestScore")){
             prefs.putInteger("bestScore", Score.getScore());
         }
